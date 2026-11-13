@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <title>SACAB TV</title>
+  <link rel="icon" href="assets/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/i18n.js"></script>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="view-login" class="auth-wrap">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <img src="assets/logo.png" alt="SACAB TV">
+        <h1>SACAB <span>TV</span></h1>
+      </div>
+      <form id="formLogin">
+        <div class="fg"><label data-i18n="email">Email</label><input type="email" id="loginEmail" required autocomplete="email"></div>
+        <div class="fg"><label data-i18n="password">Password</label><input type="password" id="loginPassword" required autocomplete="current-password"></div>
+        <button type="submit" class="btn btn-gold" data-i18n="login">Sign In</button>
+        <p class="err" id="loginErr"></p>
+      </form>
+      <p class="auth-links"><a href="#" id="linkForgot" data-i18n="forgotPassword">Forgot Password?</a></p>
+      <p class="auth-links"><span data-i18n="noAccount">Don't have an account?</span> <a href="#" id="linkRegister" data-i18n="register">Sign Up</a></p>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="view-register" class="auth-wrap hidden">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <img src="assets/logo.png" alt="SACAB TV">
+        <h1 data-i18n="register">Sign Up</h1>
+      </div>
+      <form id="formRegister">
+        <div class="fg"><label data-i18n="fullName">Full Name</label><input type="text" id="regName" required></div>
+        <div class="fg"><label data-i18n="email">Email</label><input type="email" id="regEmail" required autocomplete="email"></div>
+        <div class="fg"><label data-i18n="phone">Phone</label><input type="tel" id="regPhone" placeholder="+252..."></div>
+        <div class="fg"><label data-i18n="password">Password</label><input type="password" id="regPass" required minlength="6" autocomplete="new-password"></div>
+        <div class="fg"><label data-i18n="confirmPassword">Confirm Password</label><input type="password" id="regPass2" required minlength="6" autocomplete="new-password"></div>
+        <div class="fg"><label data-i18n="language">Language</label>
+          <select id="regLang"><option value="en">English</option><option value="so">Somali</option></select>
+        </div>
+        <button type="submit" class="btn btn-gold" data-i18n="register">Sign Up</button>
+        <p class="err" id="regErr"></p>
+      </form>
+      <p class="auth-links"><span data-i18n="haveAccount">Already have an account?</span> <a href="#" id="linkLogin" data-i18n="login">Sign In</a></p>
+    </div>
+  </div>
+
+  <!-- FORGOT -->
+  <div id="view-forgot" class="auth-wrap hidden">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <img src="assets/logo.png" alt="SACAB TV">
+        <h1 data-i18n="forgotPassword">Forgot Password?</h1>
+      </div>
+      <form id="formForgot">
+        <div class="fg"><label data-i18n="email">Email</label><input type="email" id="forgotEmail" required></div>
+        <button type="submit" class="btn btn-gold">Send Reset Link</button>
+        <p class="err" id="forgotErr"></p>
+        <p id="forgotOk" style="display:none;color:var(--gold);text-align:center;margin-top:12px;font-size:0.9rem;">Check your email.</p>
+      </form>
+      <p class="auth-links"><a href="#" id="linkBackLogin" data-i18n="login">Sign In</a></p>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="view-app" class="hidden">
+
+    <!-- HOME -->
+    <div id="page-home" class="page active">
+      <header class="topbar">
+        <div class="brand"><img src="assets/logo.png" alt=""><span>SACAB <b>TV</b></span></div>
+        <div style="display:flex;gap:6px;">
+          <button class="icon-btn" id="btnGoSearch" aria-label="Search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+          </button>
+          <button class="icon-btn" id="btnGoProfile" aria-label="Profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="ad-box" id="adHomeTop"></div>
+      <div class="hero">
+        <div class="hero-bg" id="heroBg"></div>
+        <div class="hero-body">
+          <h2 id="heroTitle">SACAB TV</h2>
+          <p id="heroDesc">Your Entertainment. One Destination.</p>
+          <div class="hero-actions">
+            <button class="btn btn-gold" id="heroPlay"><span data-i18n="watchNow">Watch Now</span></button>
+            <button class="btn btn-outline" id="heroInfo" data-i18n="moreInfo">More Info</button>
+          </div>
+        </div>
+      </div>
+      <div id="homeRows"><div class="spinner"></div></div>
+      <div class="ad-box" id="adHomeMid"></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div id="page-search" class="page">
+      <div class="pad">
+        <div class="search-bar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="search" id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search titles...">
+        </div>
+        <div id="searchGrid" class="grid"></div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="page-categories" class="page">
+      <header class="topbar"><span style="font-weight:700" data-i18n="categories">Categories</span></header>
+      <div class="cat-grid">
+        <button class="cat-btn" data-type="anime">Anime</button>
+        <button class="cat-btn" data-type="kdrama">K-Drama</button>
+        <button class="cat-btn" data-type="movie">Movies</button>
+        <button class="cat-btn" data-type="series">Series</button>
+      </div>
+      <div id="catGrid" class="grid pad"></div>
+    </div>
+
+    <!-- MY LIST -->
+    <div id="page-mylist" class="page">
+      <header class="topbar"><span style="font-weight:700" data-i18n="myList">My List</span></header>
+      <div id="listGrid" class="grid pad"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="page-profile" class="page">
+      <div class="profile-head">
+        <img class="avatar" id="pAvatar" src="assets/logo.png" alt="">
+        <div style="font-weight:700;font-size:1.15rem" id="pName">User</div>
+        <div style="color:#a0a0a0;font-size:0.88rem" id="pEmail"></div>
+      </div>
+      <div class="menu">
+        <button class="menu-item" id="btnSettings"><span data-i18n="settings">Settings</span></button>
+        <button class="menu-item hidden" id="btnAdmin"><span data-i18n="adminDashboard">Admin Dashboard</span></button>
+        <button class="menu-item" id="btnLogout" style="color:#ff8a8a"><span data-i18n="logout">Log Out</span></button>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page">
+      <header class="topbar">
+        <button class="icon-btn" id="settingsBack">←</button>
+        <span style="font-weight:700" data-i18n="settings">Settings</span>
+        <span style="width:38px"></span>
+      </header>
+      <div class="pad">
+        <div class="fg">
+          <label data-i18n="language">Language</label>
+          <select id="langSelect"><option value="en">English</option><option value="so">Somali</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL -->
+    <div id="page-detail" class="page">
+      <div class="detail-banner" id="detailBanner"></div>
+      <div class="detail-body">
+        <h1 id="detailTitle"></h1>
+        <div class="detail-meta" id="detailMeta"></div>
+        <p class="detail-desc" id="detailDesc"></p>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="btn btn-gold" id="detailPlay" style="width:auto" data-i18n="watchNow">Watch Now</button>
+          <button class="btn btn-ghost" id="detailFav" style="width:auto" data-i18n="addToList">Add to My List</button>
+          <button class="btn btn-outline" id="detailBack" style="width:auto">← Back</button>
+        </div>
+        <div class="ad-box" id="adDetail"></div>
+        <div id="detailEps"></div>
+      </div>
+    </div>
+
+    <!-- ADMIN (same login – only for admin role) -->
+    <div id="page-admin" class="page">
+      <header class="topbar">
+        <button class="icon-btn" id="adminBack">←</button>
+        <span style="font-weight:700">Admin</span>
+        <span style="width:38px"></span>
+      </header>
+      <div class="admin-page">
+        <div class="stat-row">
+          <div class="stat"><strong id="stUsers">0</strong><span>Users</span></div>
+          <div class="stat"><strong id="stContent">0</strong><span>Content</span></div>
+        </div>
+        <div class="admin-tabs">
+          <button class="on" data-tab="content">Content</button>
+          <button data-tab="ads">Ads</button>
+          <button data-tab="users">Users</button>
+        </div>
+
+        <div class="admin-panel on" id="tab-content">
+          <button class="btn btn-gold" id="btnAddContent" style="margin-bottom:12px;width:auto">+ Add Content</button>
+          <div id="adminContentList"></div>
+        </div>
+
+        <div class="admin-panel" id="tab-ads">
+          <p style="color:#a0a0a0;font-size:0.88rem;margin-bottom:12px">Xayaysiisyo – AdSense, Adsterra, image ama HTML</p>
+          <div class="fg"><label>Network</label>
+            <select id="adNet"><option value="none">None</option><option value="adsense">AdSense</option><option value="adsterra">Adsterra</option><option value="custom">Custom</option></select>
+          </div>
+          <div class="fg"><label>Publisher ID</label><input id="adPub" placeholder="ca-pub-xxx / Adsterra ID"></div>
+          <hr style="border-color:var(--border);margin:16px 0">
+          <h4 style="margin-bottom:8px;color:var(--gold)">Home Top Banner</h4>
+          <label style="font-size:0.85rem"><input type="checkbox" id="adTopOn"> Enabled</label>
+          <div class="fg"><label>Image URL</label><input id="adTopImg"></div>
+          <div class="fg"><label>Click Link</label><input id="adTopLink"></div>
+          <div class="fg"><label>Or HTML / Network code</label><textarea id="adTopHtml" rows="2"></textarea></div>
+          <h4 style="margin:16px 0 8px;color:var(--gold)">Home Middle</h4>
+          <label style="font-size:0.85rem"><input type="checkbox" id="adMidOn"> Enabled</label>
+          <div class="fg"><label>Image URL</label><input id="adMidImg"></div>
+          <div class="fg"><label>Click Link</label><input id="adMidLink"></div>
+          <div class="fg"><label>Or HTML code</label><textarea id="adMidHtml" rows="2"></textarea></div>
+          <h4 style="margin:16px 0 8px;color:var(--gold)">Detail Page</h4>
+          <label style="font-size:0.85rem"><input type="checkbox" id="adDetOn"> Enabled</label>
+          <div class="fg"><label>Image URL</label><input id="adDetImg"></div>
+          <div class="fg"><label>Click Link</label><input id="adDetLink"></div>
+          <div class="fg"><label>Or HTML code</label><textarea id="adDetHtml" rows="2"></textarea></div>
+          <button class="btn btn-gold" id="btnSaveAds" style="margin-top:12px">Save Ads</button>
+        </div>
+
+        <div class="admin-panel" id="tab-users">
+          <div id="adminUsersList"></div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="bottom-nav" id="bottomNav">
+      <button class="nav-btn active" data-page="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span data-i18n="home">Home</span>
+      </button>
+      <button class="nav-btn" data-page="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span data-i18n="search">Search</span>
+      </button>
+      <button class="nav-btn" data-page="categories">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span data-i18n="categories">Categories</span>
+      </button>
+      <button class="nav-btn" data-page="mylist">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span data-i18n="myList">My List</span>
+      </button>
+      <button class="nav-btn" data-page="profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span data-i18n="profile">Profile</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Content modal -->
+  <div class="modal-bg" id="contentModal">
+    <div class="modal">
+      <h3 id="modalTitle">Add Content</h3>
+      <form id="formContent">
+        <input type="hidden" id="cId">
+        <div class="fg"><label>Title *</label><input id="cTitle" required></div>
+        <div class="fg"><label>Type</label>
+          <select id="cType"><option value="movie">Movie</option><option value="anime">Anime</option><option value="kdrama">K-Drama</option><option value="series">Series</option></select>
+        </div>
+        <div class="fg"><label>Description</label><textarea id="cDesc" rows="2"></textarea></div>
+        <div class="fg"><label>Year</label><input id="cYear" type="number"></div>
+        <div class="fg"><label>Genre</label><input id="cGenre"></div>
+        <div class="fg"><label>Poster URL</label><input id="cPoster" placeholder="https://"></div>
+        <div class="fg"><label>Banner URL</label><input id="cBanner" placeholder="https://"></div>
+        <div class="fg"><label>Video URL (mp4/m3u8)</label><input id="cVideo" placeholder="https://"></div>
+        <label style="font-size:0.85rem"><input type="checkbox" id="cFeat"> Featured</label>
+        <label style="font-size:0.85rem;margin-left:12px"><input type="checkbox" id="cTrend"> Trending</label>
+        <div class="fg" style="margin-top:10px"><label>Episodes JSON (optional)</label>
+          <textarea id="cEps" rows="3" placeholder='[{"title":"Ep1","videoUrl":"https://"}]'></textarea>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button type="submit" class="btn btn-gold" style="width:auto" data-i18n="save">Save</button>
+          <button type="button" class="btn btn-outline" style="width:auto" id="modalClose">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Player -->
+  <div id="player">
+    <div class="player-bar">
+      <button class="icon-btn" id="playerClose" style="background:rgba(255,255,255,0.15)">←</button>
+      <span id="playerTitle"></span>
+    </div>
+    <video id="videoEl" controls playsinline></video>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div id="bootError" class="auth-wrap hidden">
+    <div class="auth-box" style="text-align:center">
+      <h2 style="color:var(--gold);margin-bottom:12px">Firebase ma soo degayo</h2>
+      <p style="color:#aaa;line-height:1.5">Internet-ka hubi. VPN damis. Kadib refresh garee.</p>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
